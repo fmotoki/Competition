@@ -23,7 +23,16 @@ cdesc <- c("Record type", "Negotiation date", "BDI code", "Negotiation code", "M
 #data <- laf_open_fwf("COTAHIST.A1994", column_types=ctypes, column_widths=cwidths, column_names=cnames, trim=TRUE, skip=1)
 #goto(datalaf, 2)
 #Create file object
-data <- read.fwf(file="COTAHIST.A1994", skip=1, widths=cwidths, header=FALSE, col.names=cnames)
+#bidask_data <- read.fwf(file="COTAHIST_A2009.TXT", skip=1, widths=cwidths, header=FALSE, col.names=cnames)
 #Load data
-price_data <- data[ , ]
+#price_data <- bas_data[ , ]
 			
+bidask_data = NULL
+for(i in 2009:2011) {
+  filename <- paste0("COTAHIST_A",i,".TXT",collapse=NULL)
+  retrieved_data <- read.fwf(file=filename, skip=1, widths=cwidths, header=FALSE, col.names=cnames) 
+  retrieved_data <- subset(retrieved_data, typ_mkt==10 & type==1)
+  bidask_data <- rbind(bidask_data, retrieved_data)
+}
+
+save(bidask_data, file="bidask.rda")
